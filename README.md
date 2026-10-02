@@ -1,35 +1,37 @@
 # Session 8 game
 
-One multiplayer browser game, built by every team in this repository.
+This page is for team members at session 8. Every team builds one multiplayer browser game in this repository.
 
-The part that connects the players is already built, in `lib/sync.js`, and you build the game on top of it.
+The code that connects the players is already written. It is in `lib/sync.js`. Your team writes the game.
 
-## How to run it
+You need Node.js version 18 or later.
 
-1. In a terminal, go to this folder.
-2. Run `npm start`.
+## How to run the game
+
+1. Open a terminal in the folder of this repository.
+2. Run `npm start`. The terminal prints `http://localhost:8000`.
 3. In your browser, open `http://localhost:8000`.
 4. Open the same address in a second tab. Each tab is a separate player.
 
-You see two dots. When you move one with WASD or the arrow keys, it also moves in the other tab.
+When the two tabs connect, each tab shows two dots. Your dot has a white outline. Press W, A, S, D or the arrow keys to move your dot. It moves in the other tab too.
+
+## How to change the game
+
+1. Open a second terminal in the folder of this repository.
+2. Start your coding agent, for example Claude Code. The agent reads `AGENTS.md`, which has the rules for `lib/sync.js`.
+3. Type what the game must do.
+4. In your browser, reload both tabs. The tabs show the changed game.
 
 ## How to test without the other teams
 
-Add `?room=` and a name to the address. Example: `http://localhost:8000/?room=team-blue`. Only browsers with the same room name meet each other.
+Without a room name, your browser connects to the browsers of every team, even when the game runs on your own laptop.
 
-## What `lib/sync.js` gives you
+Add `?room=` and a room name to the address, for example `http://localhost:8000/?room=team-blue`. Your browser then connects only to browsers with the same room name.
 
-- State is what each player looks like right now, for example the position. It is sent to the other players 20 times a second.
-- Channels carry messages for things that happen once, for example a throw.
-- Shared maps hold data that every browser keeps a copy of, for example the scores. The data is still there after a reload, and players who join later get it.
+## How to check `lib/sync.js` after a change
 
-`AGENTS.md` has the full list and the rules. Coding agents read that file by themselves. `CLAUDE.md` points Claude Code to it.
+If you changed `lib/sync.js`, run the test.
 
-## How to check `lib/sync.js` still works
-
-Run this only if you changed `lib/sync.js`.
-
-1. First time only: run `npm install`, then `npx playwright install chromium`.
-2. Run `npm test`.
-
-The test opens three browsers and checks 14 things. It ends with "All 14 checks passed."
+1. First time only: run `npm install`, then run `npx playwright install chromium`.
+2. Run `npm test`. The test opens three browsers.
+3. Read the last line. It says "All 14 checks passed." when `lib/sync.js` works.
