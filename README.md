@@ -23,7 +23,7 @@ Add `?room=` and a name to the address. Example: `http://localhost:8000/?room=te
 - Channels carry messages for things that happen once, for example a throw.
 - Shared maps hold data that every browser keeps a copy of, for example the scores. The data is still there after a reload, and players who join later get it.
 
-`CLAUDE.md` has the full list and the rules. Claude Code reads that file by itself.
+`AGENTS.md` has the full list and the rules. Coding agents read that file by themselves. `CLAUDE.md` points Claude Code to it.
 
 ## How to check `lib/sync.js` still works
 
