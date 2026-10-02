@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Session 8 starter</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #1d1b19; color: #f2ede6;
+    font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; overflow: hidden; }
+  canvas { display: block; }
+  #status, #scores { position: fixed; top: 12px; background: rgba(20,18,16,.82); padding: 6px 12px; border-radius: 8px; }
+  #status { left: 12px; }
+  #scores { right: 12px; min-width: 140px; }
+  #scores div { display: flex; justify-content: space-between; gap: 16px; }
+  #help { position: fixed; bottom: 10px; left: 12px; font-size: 13px; background: rgba(20,18,16,.75); padding: 4px 10px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="status">Connecting</div>
+<div id="scores"></div>
+<div id="help">Move with WASD or the arrow keys. Click to send a ring to everyone.</div>
+<script type="module">
+// The starter: every player is a dot. It uses all three parts of lib/sync.js.
+// Replace it with the game.
+import { connect } from './lib/sync.js';
+
+const net = await connect({ app: 'ccm-session-8' });
+
+// ---------- Shared: saved, and sent to players who join later ----------
+const names = net.shared('names');     // player id -> name
+const clicks = net.shared('clicks');   // player id -> number of clicks. Each player writes only their own key.
+if (!names.get(net.id)) names.set(net.id, 'Player ' + net.id.slice(0, 3));
+
+// ---------- Channel: one-off messages ----------
+const ring = net.channel('ring');      // { x, y }
+const rings = [];                      // { x, y, age, color }
+ring.on(({ x, y }, fromId) => rings.push({ x, y, age: 0, color: colorOf(fromId) }));
+
+// ---------- State: what this player looks like right now ----------
+const me = { x: 200 + Math.random() * 400, y: 150 + Math.random() * 300 };
+net.setState(me);
+
+function colorOf(id) {
+  let h = 0; for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) % 360;
+  return `hsl(${h} 70% 60%)`;
+}
+
+const cvs = document.getElementById('c'), ctx = cvs.getContext('2d');
+const keys = new Set();
+addEventListener('keydown', e => keys.add(e.key.toLowerCase()));
+addEventListener('keyup', e => keys.delete(e.key.toLowerCase()));
+addEventListener('blur', () => keys.clear());
+cvs.addEventListener('click', e => {
+  rings.push({ x: e.clientX, y: e.clientY, age: 0, color: colorOf(net.id) });
+  ring.send({ x: e.clientX, y: e.clientY });
+  clicks.set(net.id, (clicks.get(net.id) || 0) + 1);
+});
+function resize() { cvs.width = innerWidth; cvs.height = innerHeight; }
+addEventListener('resize', resize); resize();
+
+function renderScores() {
+  document.getElementById('scores').replaceChildren(...[...names.entries()].map(([id, name]) => {
+    const row = document.createElement('div');
+    const left = document.createElement('span'), right = document.createElement('b');
+    left.textContent = name + (id === net.id ? ' (you)' : '');
+    right.textContent = clicks.get(id) || 0;
+    row.append(left, right);
+    return row;
+  }));
+}
+net.onChange(renderScores); renderScores();
+
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  let dx = 0, dy = 0;
+  if (keys.has('a') || keys.has('arrowleft')) dx--;
+  if (keys.has('d') || keys.has('arrowright')) dx++;
+  if (keys.has('w') || keys.has('arrowup')) dy--;
+  if (keys.has('s') || keys.has('arrowdown')) dy++;
+  if (dx || dy) {
+    me.x += dx * 240 * dt; me.y += dy * 240 * dt;
+    net.setState(me);
+  }
+
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i]; r.age += dt;
+    if (r.age > 1) { rings.splice(i, 1); continue; }
+    ctx.strokeStyle = r.color; ctx.globalAlpha = 1 - r.age; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(r.x, r.y, 10 + r.age * 60, 0, 7); ctx.stroke(); ctx.globalAlpha = 1;
+  }
+  const players = net.players();
+  for (const p of players) {
+    ctx.fillStyle = colorOf(p.id);
+    ctx.beginPath(); ctx.arc(p.state.x, p.state.y, 14, 0, 7); ctx.fill();
+    if (p.me) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke(); }
+    ctx.fillStyle = '#fff'; ctx.font = '600 12px system-ui, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(names.get(p.id) || '', p.state.x, p.state.y - 22);
+  }
+  const others = players.length - 1;
+  document.getElementById('status').textContent =
+    `Room ${net.room}. ` + (others ? `${others} other ${others === 1 ? 'player' : 'players'} connected.` : 'Waiting for other players.');
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
