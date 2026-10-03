@@ -6,18 +6,18 @@
 2. Paste the text below.
 3. Replace TEAMNAME with your team name. After "Our game:", write what your game is. Then press Enter.
 
-> Build a multiplayer browser game. Put everything in game.html. For everything between players use the library at https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js and follow the rules in https://raw.githubusercontent.com/ccmpm/session-8/main/AGENTS.md. Do not add a server, an install step or any other file. Connect with the app name set to our team name, TEAMNAME, so we only meet our own players. The game must work when game.html is opened by double-clicking it. Our game: ...
+> Build a multiplayer browser game. Put everything in index.html. For everything between players use the library at https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js and follow the rules in https://raw.githubusercontent.com/ccmpm/session-8/main/AGENTS.md. Do not add a server, an install step or any other file. Connect with the app name set to our team name, TEAMNAME, so we only meet our own players. The game must work when index.html is opened by double-clicking it. Our game: ...
 
 ## How to play the game
 
-1. Double-click `game.html`. It opens in your browser.
+1. Double-click `index.html`. It opens in your browser.
 2. Open it again on another laptop, or in a second tab. Every open page is a player.
 
 ## How to change the game
 
 1. Tell Claude what to change.
-2. Close the game and double-click `game.html` again.
+2. Close the game and double-click `index.html` again.
 
 ## How to put the game online
 
-Send `game.html` to the organiser. The organiser puts it at an address that everyone in the room can open on a phone.
+Send `index.html` to the organiser. The organiser puts it at an address that everyone in the room can open on a phone.

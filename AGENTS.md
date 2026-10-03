@@ -1,6 +1,6 @@
 # Session 8 game
 
-Rules for the coding agent that builds a session 8 game: one file, `game.html`, that works when opened by double-clicking it.
+Rules for the coding agent that builds a session 8 game: one file, `index.html`, that works when opened by double-clicking it.
 
 ## Networking is already built
 
@@ -53,7 +53,7 @@ net.onChange(() => {});                  // runs after any shared map changes
 
 ## Running and testing
 
-- One file, `game.html`, plain HTML with one `<script type="module">`. No build step, no npm, no server. Everything it needs comes from `https://cdn.jsdelivr.net`.
+- One file, `index.html`, plain HTML with one `<script type="module">`. No build step, no npm, no server. Everything it needs comes from `https://cdn.jsdelivr.net`.
 - It must work opened from disk (`file://`): import only from https URLs, never from a local path.
 - Each open copy of the page is a separate player. Open it in two tabs to test.
 - Put `window.net = net` so the console can inspect the connection. Example: `net.players()`.
