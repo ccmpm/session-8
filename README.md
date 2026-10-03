@@ -1,7 +1,5 @@
 # Session 8 game
 
-Your team makes one multiplayer game. It is one file, `game.html`. When two people open it, they see each other in the game. The code that connects the players is already written. You describe the game and Claude writes it.
-
 ## How to build the game
 
 1. Open Claude Code in an empty folder.
@@ -12,8 +10,8 @@ Your team makes one multiplayer game. It is one file, `game.html`. When two peop
 
 ## How to play the game
 
-1. Double-click `game.html`. It opens in your browser. You are player one.
-2. Open it again, in a second tab or on another laptop. That is player two.
+1. Double-click `game.html`. It opens in your browser.
+2. Open it again on another laptop, or in a second tab. Each open page is one player.
 
 ## How to change the game
 
