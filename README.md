@@ -1,37 +1,55 @@
 # Session 8 game
 
-This page is for team members at session 8. Every team builds one multiplayer browser game in this repository.
+Every team at session 8 builds one multiplayer browser game. The code that connects the players is already written: `lib/sync.js`. It joins the browsers in a room directly to each other, with Yjs for shared data, and needs no server, no account and no install.
 
-The code that connects the players is already written. It is in `lib/sync.js`. Your team writes the game.
+Your team writes the game. You do that by telling your coding agent what to build.
 
-You need Node.js version 18 or later.
+## The prompt
+
+Open your coding agent (Claude Code, Cursor, Codex, ...) in an empty folder and paste this, then describe your game:
+
+> Use the library in https://github.com/ccmpm/session-8 to set up multiplayer sync for a browser game: copy `lib/sync.js` from that repo into `lib/sync.js` here, read its `AGENTS.md` and follow its rules. Plain HTML and JavaScript modules, no build step, no npm packages, no server of our own. `net.setState` for live positions, `net.channel` for one-off events, `net.shared` (Yjs) for scores and anything that must survive a reload. Then build this game: ...
+
+The agent fetches the two files, writes `index.html`, and your game is online with everyone else's.
+
+If your agent cannot fetch from GitHub, load the library straight from a CDN instead of copying it:
+
+```js
+import { connect } from 'https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js';
+```
 
 ## How to run the game
 
-1. Open a terminal in the folder of this repository.
-2. Run `npm start`. The terminal prints `http://localhost:8000`.
-3. In your browser, open `http://localhost:8000`.
-4. Open the same address in a second tab. Each tab is a separate player.
+The page must be served over http; opening the file directly does not work. Any static file server does. Pick the one you have:
 
-When the two tabs connect, each tab shows two dots. Your dot has a white outline. Press W, A, S, D or the arrow keys to move your dot. It moves in the other tab too.
+- `python3 -m http.server 8000`
+- `node serve.js` (the small server in this repo, if you cloned it)
+- `npx serve` if you already use npm
 
-## How to change the game
+Open `http://localhost:8000` in two tabs. Each tab is a separate player.
 
-1. Open a second terminal in the folder of this repository.
-2. Start your coding agent, for example Claude Code. The agent reads `AGENTS.md`, which has the rules for `lib/sync.js`.
-3. Type what the game must do.
-4. In your browser, reload both tabs. The tabs show the changed game.
+## Rooms
 
-## How to test without the other teams
+Without a room name your browser connects to the browsers of every team, even when the game runs on your own laptop. Add `?room=team-blue` to the address to connect only to browsers with the same room name.
 
-Without a room name, your browser connects to the browsers of every team, even when the game runs on your own laptop.
+## The library
 
-Add `?room=` and a room name to the address, for example `http://localhost:8000/?room=team-blue`. Your browser then connects only to browsers with the same room name.
+`AGENTS.md` is the full reference. In short:
 
-## How to check `lib/sync.js` after a change
+```js
+import { connect } from './lib/sync.js';
+const net = await connect({ app: 'ccm-session-8' });
 
-If you changed `lib/sync.js`, run the test.
+net.id                      // this player's id, the same after a reload
+net.setState({ x, y })      // this player's live state, sent 20 times a second
+net.players()               // [{ id, me, state }] for every player
+net.channel('shot')         // one-off messages: send(data), on((data, fromId) => {})
+net.shared('scores')        // a Yjs Y.Map every browser keeps a copy of
+net.onChange(() => {})      // runs after any shared map changes
+```
 
-1. First time only: run `npm install`, then run `npx playwright install chromium`.
-2. Run `npm test`. The test opens three browsers.
-3. Read the last line. It says "All 14 checks passed." when `lib/sync.js` works.
+`index.html` in this repo is a small working example that uses all three.
+
+## Changing `lib/sync.js`
+
+Only the organisers should need to. If you do, run the test: `npm install`, `npx playwright install chromium`, then `npm test`. The last line says "All 14 checks passed." when it works.
