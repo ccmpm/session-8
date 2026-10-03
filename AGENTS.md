@@ -4,7 +4,7 @@ This repository holds one multiplayer browser game. Every team works in it.
 
 ## Networking is already built
 
-Use `lib/sync.js` for everything that goes between players. It connects the browsers in a room directly to each other. The game has no server.
+Use `lib/sync.js` for everything that goes between players. It connects the browsers in a room directly to each other, and through ccm.pm's relay when two networks will not connect directly. The game has no server of its own.
 
 - You must not add a server, a database, WebSocket code or WebRTC code.
 - You must not import Trystero or Yjs yourself. `lib/sync.js` already does.
