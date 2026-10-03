@@ -1,55 +1,25 @@
 # Session 8 game
 
-Every team at session 8 builds one multiplayer browser game. The code that connects the players is already written: `lib/sync.js`. It joins the browsers in a room directly to each other, with Yjs for shared data, and needs no server, no account and no install.
+Your team makes one multiplayer game. It is one file, `game.html`. When two people open it, they see each other in the game. The code that connects the players is already written. You describe the game and Claude writes it.
 
-Your team writes the game. You do that by telling your coding agent what to build.
+## How to build the game
 
-## The prompt
+1. Open Claude Code in an empty folder.
+2. Paste the text below.
+3. Replace TEAMNAME with your team name. After "Our game:", write what your game is. Then press Enter.
 
-Open your coding agent (Claude Code, Cursor, Codex, ...) in an empty folder and paste this, then describe your game:
+> Build a multiplayer browser game as one file, game.html. For everything between players use the library at https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js and follow the rules in https://raw.githubusercontent.com/ccmpm/session-8/main/AGENTS.md. Do not add a server, an install step or any other file. Connect with the app name set to our team name, TEAMNAME, so we only meet our own players. The game must work when game.html is opened by double-clicking it. Our game: ...
 
-> Use the library in https://github.com/ccmpm/session-8 to set up multiplayer sync for a browser game: copy `lib/sync.js` from that repo into `lib/sync.js` here, read its `AGENTS.md` and follow its rules. Plain HTML and JavaScript modules, no build step, no npm packages, no server of our own. `net.setState` for live positions, `net.channel` for one-off events, `net.shared` (Yjs) for scores and anything that must survive a reload. Then build this game: ...
+## How to play the game
 
-The agent fetches the two files, writes `index.html`, and your game is online with everyone else's.
+1. Double-click `game.html`. It opens in your browser. You are player one.
+2. Open it again, in a second tab or on another laptop. That is player two.
 
-If your agent cannot fetch from GitHub, load the library straight from a CDN instead of copying it:
+## How to change the game
 
-```js
-import { connect } from 'https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js';
-```
+1. Tell Claude what to change.
+2. Close the game and double-click `game.html` again.
 
-## How to run the game
+## How to put the game online
 
-The page must be served over http; opening the file directly does not work. Any static file server does. Pick the one you have:
-
-- `python3 -m http.server 8000`
-- `node serve.js` (the small server in this repo, if you cloned it)
-- `npx serve` if you already use npm
-
-Open `http://localhost:8000` in two tabs. Each tab is a separate player.
-
-## Rooms
-
-Without a room name your browser connects to the browsers of every team, even when the game runs on your own laptop. Add `?room=team-blue` to the address to connect only to browsers with the same room name.
-
-## The library
-
-`AGENTS.md` is the full reference. In short:
-
-```js
-import { connect } from './lib/sync.js';
-const net = await connect({ app: 'ccm-session-8' });
-
-net.id                      // this player's id, the same after a reload
-net.setState({ x, y })      // this player's live state, sent 20 times a second
-net.players()               // [{ id, me, state }] for every player
-net.channel('shot')         // one-off messages: send(data), on((data, fromId) => {})
-net.shared('scores')        // a Yjs Y.Map every browser keeps a copy of
-net.onChange(() => {})      // runs after any shared map changes
-```
-
-`index.html` in this repo is a small working example that uses all three.
-
-## Changing `lib/sync.js`
-
-Only the organisers should need to. If you do, run the test: `npm install`, `npx playwright install chromium`, then `npm test`. The last line says "All 14 checks passed." when it works.
+Send `game.html` to the organiser. The organiser puts it at an address that everyone in the room can open on a phone.

@@ -1,18 +1,18 @@
 # Session 8 game
 
-This repository holds one multiplayer browser game. Every team works in it.
+Rules for the coding agent that builds a session 8 game: one file, `game.html`, that works when opened by double-clicking it.
 
 ## Networking is already built
 
-Use `lib/sync.js` for everything that goes between players. It connects the browsers in a room directly to each other, and through ccm.pm's relay when two networks will not connect directly. The game has no server of its own.
+Use `lib/sync.js` for everything that goes between players. Import it from `https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js`; do not copy it into the project. It connects the browsers in a room directly to each other, and through ccm.pm's relay when two networks will not connect directly. The game has no server of its own.
 
 - You must not add a server, a database, WebSocket code or WebRTC code.
 - You must not import Trystero or Yjs yourself. `lib/sync.js` already does.
-- You must not change `lib/sync.js` unless the request is about `lib/sync.js`. If you change it, run `npm test`.
+- You must not change `lib/sync.js` or write your own copy of it.
 
 ```js
-import { connect } from './lib/sync.js';
-const net = await connect({ app: 'ccm-session-8' });
+import { connect } from 'https://cdn.jsdelivr.net/gh/ccmpm/session-8@main/lib/sync.js';
+const net = await connect({ app: 'TEAMNAME' });   // the team's name: players only meet others with the same app name
 
 net.id                      // this player's id, the same after a reload
 net.setState({ x, y })      // this player's live state
@@ -28,7 +28,7 @@ const scores = net.shared('scores');     // a Yjs Y.Map: get, set, delete, has, 
 net.onChange(() => {});                  // runs after any shared map changes
 ```
 
-`index.html` is a small working example that uses all three parts.
+`https://raw.githubusercontent.com/ccmpm/session-8/main/example.html` is a small working one-file example that uses all three parts.
 
 ## Which part to use
 
@@ -53,8 +53,7 @@ net.onChange(() => {});                  // runs after any shared map changes
 
 ## Running and testing
 
-- No build step. The game is plain HTML and JavaScript modules.
-- Run `npm start` and open `http://localhost:8000`. Opening the file directly does not work.
-- Each browser tab is a separate player. Open two tabs to test.
-- Add `?room=your-team-name` to the address to test in a room of your own.
-- In the browser console, `net` is the connection. Example: `net.players()`.
+- One file, `game.html`, plain HTML with one `<script type="module">`. No build step, no npm, no server. Everything it needs comes from `https://cdn.jsdelivr.net`.
+- It must work opened from disk (`file://`): import only from https URLs, never from a local path.
+- Each open copy of the page is a separate player. Open it in two tabs to test.
+- Put `window.net = net` so the console can inspect the connection. Example: `net.players()`.
